@@ -1,3 +1,4 @@
+```python id="h4n2k8"
 import streamlit as st
 from moviepy.editor import (
     VideoFileClip,
@@ -23,9 +24,9 @@ st.title("🎧 DJ Audio & Video Mixing Studio")
 
 VIDEO_PATH = "10sec.mp4"
 
-# DJ SONGS
-AUDIO_1 = "white.mp3"
-AUDIO_2 = "ADSS.mp3"
+# AUDIO SONGS
+AUDIO_1 = "ADSS.mp3"
+AUDIO_2 = "bbb.mp3"
 
 # ---------------------------------------------------
 # CHECK FILES
@@ -79,24 +80,22 @@ def replace_audio(video_path, audio_path, output):
 # FUNCTION: DJ AUDIO MIXING
 # ---------------------------------------------------
 
-def mix_audio_tracks(output, volume1, volume2, offset2):
+def mix_audio_tracks(output):
 
-    # Load songs
+    # Load first song
     song1 = AudioFileClip(AUDIO_1)
+
+    # Load second song
     song2 = AudioFileClip(AUDIO_2)
 
-    # Remove background noise
+    # Simple noise reduction
     song1 = clean_audio(song1)
     song2 = clean_audio(song2)
 
-    # Adjust volume levels
-    song1 = song1.volumex(volume1)
-    song2 = song2.volumex(volume2)
+    # Play second song after first song + 2 sec gap
+    song2 = song2.set_start(song1.duration + 2)
 
-    # Apply timing offset
-    song2 = song2.set_start(offset2)
-
-    # Create DJ mix
+    # Combine songs
     mixed = CompositeAudioClip([
         song1,
         song2
@@ -146,6 +145,8 @@ elif st.session_state.page == "replace":
 
     st.subheader("🎵 Replace Video Audio")
 
+    st.write("Replace video sound with ADSS.mp3")
+
     if st.button("▶ Start Replacing"):
 
         if check_file(VIDEO_PATH) and check_file(AUDIO_1):
@@ -176,54 +177,15 @@ elif st.session_state.page == "mix":
 
     st.subheader("🎧 DJ Audio Mixing Studio")
 
-    # Volume controls
-    st.markdown("### 🔊 Adjust Volume Levels")
+    st.write("ADSS.mp3 plays first, then 2 seconds gap, then bbb.mp3")
 
-    volume1 = st.slider(
-        "white.mp3 Volume",
-        0.0,
-        2.0,
-        1.0,
-        0.1
-    )
-
-    volume2 = st.slider(
-        "pink.mp3 Volume",
-        0.0,
-        2.0,
-        1.0,
-        0.1
-    )
-
-    # Timing offset
-    st.markdown("### ⏱ Apply Timing Offset")
-
-    offset1 = st.slider(
-        "ADSS.mp3 Start Time",
-        0,
-        20,
-        5
-    )
-    offset2 = st.slider(
-        "pink.mp3 Start Time",
-        0,
-        10,
-        2
-    )
-
-    # Mix button
     if st.button("🎚 Create DJ Mix"):
 
         if check_file(AUDIO_1) and check_file(AUDIO_2):
 
             with st.spinner("Mixing Audio Tracks..."):
 
-                mix_audio_tracks(
-                    "dj_mix.mp3",
-                    volume1,
-                    volume2,
-                    offset2
-                )
+                mix_audio_tracks("dj_mix.mp3")
 
             st.success("✅ DJ Mix Created Successfully!")
 
@@ -250,3 +212,4 @@ for file in files:
         st.success(f"✅ Found: {file}")
     else:
         st.error(f"❌ Missing: {file}")
+```
