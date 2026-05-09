@@ -99,7 +99,7 @@ def mix_audio_tracks(output, volume1, volume2, offset2):
     song2 = song2.volumex(volume2)
 
     # Apply timing offset
-   song2 = song2.set_start(song1.duration + offset2)
+    song2 = song2.set_start(song1.duration + offset2)
 
     # Create DJ mix
     mixed = CompositeAudioClip([
