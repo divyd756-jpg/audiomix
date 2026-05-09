@@ -198,7 +198,7 @@ elif st.session_state.page == "mix":
     # Timing offset
     st.markdown("### ⏱ Apply Timing Offset")
 
-    offset2 = st.slider(
+    offset1 = st.slider(
         "pink.mp3 Start Time",
         0,
         20,
