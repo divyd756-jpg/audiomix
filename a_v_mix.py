@@ -240,28 +240,83 @@ if st.session_state.page == "home":
 # REPLACE AUDIO PAGE
 # ---------------------------------------------------
 
-elif st.session_state.page == "replace":
+# ---------------------------------------------------
+# NOISE REMOVAL PAGE
+# ---------------------------------------------------
 
-    st.subheader("🎵 Replace Video Audio")
+elif st.session_state.page == "noise":
 
-    if st.button("▶ Start Replacing"):
+    st.subheader("🔇 Remove Background Noise")
 
-        if check_file(VIDEO_PATH) and check_file(AUDIO_1):
+    # -----------------------------------------------
+    # CLEAN white.mp3
+    # -----------------------------------------------
 
-            with st.spinner("Processing Video..."):
+    if st.button("▶ Clean white.mp3"):
 
-                replace_audio(
-                    VIDEO_PATH,
+        if check_file(AUDIO_1):
+
+            with st.spinner("Cleaning white.mp3..."):
+
+                remove_noise(
                     AUDIO_1,
-                    "output_video.mp4"
+                    "clean_white.mp3"
                 )
 
-            st.success("✅ Audio Replaced Successfully!")
+            st.success("✅ white.mp3 Noise Removed!")
 
-            st.video("output_video.mp4")
+            st.audio("clean_white.mp3")
 
         else:
-            st.error("❌ Missing video or audio file.")
+            st.error("❌ white.mp3 missing.")
+
+    # -----------------------------------------------
+    # CLEAN pink.mp3
+    # -----------------------------------------------
+
+    if st.button("▶ Clean pink.mp3"):
+
+        if check_file(AUDIO_2):
+
+            with st.spinner("Cleaning pink.mp3..."):
+
+                remove_noise(
+                    AUDIO_2,
+                    "clean_pink.mp3"
+                )
+
+            st.success("✅ pink.mp3 Noise Removed!")
+
+            st.audio("clean_pink.mp3")
+
+        else:
+            st.error("❌ pink.mp3 missing.")
+
+    # -----------------------------------------------
+    # CLEAN bbb.mp3
+    # -----------------------------------------------
+
+    if st.button("▶ Clean bbb.mp3"):
+
+        if check_file(AUDIO_3):
+
+            with st.spinner("Cleaning bbb.mp3..."):
+
+                remove_noise(
+                    AUDIO_3,
+                    "clean_bbb.mp3"
+                )
+
+            st.success("✅ bbb.mp3 Noise Removed!")
+
+            st.audio("clean_bbb.mp3")
+
+        else:
+            st.error("❌ bbb.mp3 missing.")
+
+    # -----------------------------------------------
+    # BACK BUTTON
+    # -----------------------------------------------
 
     if st.button("⬅ Back"):
         st.session_state.page = "home"
