@@ -5,6 +5,7 @@ from moviepy.editor import (
     CompositeAudioClip
 )
 import os
+from moviepy.audio.fx.all import audio_normalize
 
 # ---------------------------------------------------
 # PAGE SETTINGS
@@ -40,9 +41,13 @@ def check_file(file):
 
 def clean_audio(audio):
 
-    # Simple background noise reduction
-    return audio.volumex(0.8)
+    # Reduce background noise
+    audio = audio.volumex(0.7)
 
+    # Normalize audio
+    audio = audio.fx(audio_normalize)
+
+    return audio
 # ---------------------------------------------------
 # FUNCTION: REPLACE VIDEO AUDIO
 # ---------------------------------------------------
@@ -94,7 +99,7 @@ def mix_audio_tracks(output, volume1, volume2, offset2):
     song2 = song2.volumex(volume2)
 
     # Apply timing offset
-    song2 = song2.set_start(offset2)
+   song2 = song2.set_start(song1.duration + offset2)
 
     # Create DJ mix
     mixed = CompositeAudioClip([
