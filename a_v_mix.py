@@ -16,18 +16,17 @@ st.set_page_config(
     layout="centered"
 )
 
-st.title("Audio & Video Mixing Studio")
+st.title("🎧 DJ Audio & Video Mixing Studio")
+
+# ---------------------------------------------------
+# LIGHT COLOR THEME
+# ---------------------------------------------------
 
 st.markdown("""
 <style>
 
 /* Full page background */
 [data-testid="stAppViewContainer"] {
-    background-color: #f5f7ff;
-}
-
-/* Main content background */
-[data-testid="stHeader"] {
     background-color: #f5f7ff;
 }
 
@@ -49,19 +48,36 @@ st.markdown("""
     color: black;
 }
 
-/* Text colors */
+/* Text */
 h1, h2, h3, p {
     color: #222222;
+}
+
+/* Audio player */
+audio {
+    width: 100%;
+    margin-top: 10px;
+}
+
+/* Video player */
+video {
+    border-radius: 10px;
+    margin-top: 10px;
 }
 
 </style>
 """, unsafe_allow_html=True)
 
+# ---------------------------------------------------
+# FILE PATHS
+# ---------------------------------------------------
+
 VIDEO_PATH = "10sec.mp4"
 
-# DJ SONGS
+# SONGS
 AUDIO_1 = "white.mp3"
 AUDIO_2 = "pink.mp3"
+AUDIO_3 = "bbb.mp3"
 
 # ---------------------------------------------------
 # CHECK FILES
@@ -71,31 +87,29 @@ def check_file(file):
     return os.path.exists(file)
 
 # ---------------------------------------------------
-# NOISE REDUCTION FUNCTION
+# NOISE REDUCTION
 # ---------------------------------------------------
 
 def clean_audio(audio):
 
-    # Reduce background noise
+    # Reduce noise
     audio = audio.volumex(0.7)
 
-    # Normalize audio
+    # Normalize sound
     audio = audio.fx(audio_normalize)
 
     return audio
 
 # ---------------------------------------------------
-# FUNCTION: REMOVE NOISE
+# REMOVE NOISE FUNCTION
 # ---------------------------------------------------
 
 def remove_noise(input_file, output_file):
 
     audio = AudioFileClip(input_file)
 
-    # Clean audio
     cleaned = clean_audio(audio)
 
-    # Export cleaned audio
     cleaned.write_audiofile(
         output_file,
         fps=44100
@@ -105,7 +119,7 @@ def remove_noise(input_file, output_file):
     cleaned.close()
 
 # ---------------------------------------------------
-# FUNCTION: REPLACE VIDEO AUDIO
+# REPLACE VIDEO AUDIO
 # ---------------------------------------------------
 
 def replace_audio(video_path, audio_path, output):
@@ -116,14 +130,14 @@ def replace_audio(video_path, audio_path, output):
     # Clean audio
     audio = clean_audio(audio)
 
-    # Trim audio if longer than video
+    # Trim if longer
     if audio.duration > video.duration:
         audio = audio.subclip(0, video.duration)
 
-    # Replace audio
+    # Replace sound
     final = video.set_audio(audio)
 
-    # Export video
+    # Export
     final.write_videofile(
         output,
         codec="libx264",
@@ -136,30 +150,50 @@ def replace_audio(video_path, audio_path, output):
     final.close()
 
 # ---------------------------------------------------
-# FUNCTION: DJ AUDIO MIXING
+# DJ AUDIO MIXING
 # ---------------------------------------------------
 
-def mix_audio_tracks(output, volume1, volume2, offset2):
+def mix_audio_tracks(
+    output,
+    volume1,
+    volume2,
+    volume3,
+    offset2,
+    offset3
+):
 
     # Load songs
     song1 = AudioFileClip(AUDIO_1)
     song2 = AudioFileClip(AUDIO_2)
+    song3 = AudioFileClip(AUDIO_3)
 
     # Clean audio
     song1 = clean_audio(song1)
     song2 = clean_audio(song2)
+    song3 = clean_audio(song3)
 
-    # Adjust volume
+    # Volume control
     song1 = song1.volumex(volume1)
     song2 = song2.volumex(volume2)
+    song3 = song3.volumex(volume3)
 
-    # Play second song after first song + offset
-    song2 = song2.set_start(song1.duration + offset2)
+    # Play second song after first
+    song2 = song2.set_start(
+        song1.duration + offset2
+    )
+
+    # Play third song after second
+    song3 = song3.set_start(
+        song1.duration +
+        song2.duration +
+        offset3
+    )
 
     # Combine songs
     mixed = CompositeAudioClip([
         song1,
-        song2
+        song2,
+        song3
     ])
 
     # Export final mix
@@ -170,6 +204,7 @@ def mix_audio_tracks(output, volume1, volume2, offset2):
 
     song1.close()
     song2.close()
+    song3.close()
     mixed.close()
 
 # ---------------------------------------------------
@@ -222,6 +257,7 @@ elif st.session_state.page == "replace":
                 )
 
             st.success("✅ Audio Replaced Successfully!")
+
             st.video("output_video.mp4")
 
         else:
@@ -257,18 +293,26 @@ elif st.session_state.page == "mix":
         0.1
     )
 
+    volume3 = st.slider(
+        "bbb.mp3 Volume",
+        0.0,
+        2.0,
+        1.0,
+        0.1
+    )
+
     # Timing offset
     st.markdown("### ⏱ Apply Timing Offset")
 
-    offset1 = st.slider(
-        "white.mp3 Delay",
+    offset2 = st.slider(
+        "Second Song Delay",
         0,
         10,
         2
     )
 
-    offset2 = st.slider(
-        "pink.mp3 Delay",
+    offset3 = st.slider(
+        "Third Song Delay",
         0,
         10,
         2
@@ -277,7 +321,11 @@ elif st.session_state.page == "mix":
     # Mix button
     if st.button("🎚 Create DJ Mix"):
 
-        if check_file(AUDIO_1) and check_file(AUDIO_2):
+        if (
+            check_file(AUDIO_1)
+            and check_file(AUDIO_2)
+            and check_file(AUDIO_3)
+        ):
 
             with st.spinner("Mixing Audio Tracks..."):
 
@@ -285,10 +333,13 @@ elif st.session_state.page == "mix":
                     "dj_mix.mp3",
                     volume1,
                     volume2,
-                    offset2
+                    volume3,
+                    offset2,
+                    offset3
                 )
 
             st.success("✅ DJ Mix Created Successfully!")
+
             st.audio("dj_mix.mp3")
 
         else:
@@ -317,6 +368,7 @@ elif st.session_state.page == "noise":
                 )
 
             st.success("✅ Noise Removed Successfully!")
+
             st.audio("clean_white.mp3")
 
         else:
@@ -332,7 +384,12 @@ elif st.session_state.page == "noise":
 st.markdown("---")
 st.subheader("📁 File Status")
 
-files = [VIDEO_PATH, AUDIO_1, AUDIO_2]
+files = [
+    VIDEO_PATH,
+    AUDIO_1,
+    AUDIO_2,
+    AUDIO_3
+]
 
 for file in files:
 
