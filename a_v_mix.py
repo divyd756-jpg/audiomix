@@ -21,10 +21,20 @@ st.title("Audio & Video Mixing Studio")
 st.markdown("""
 <style>
 
-/* Main buttons */
+/* Full page background */
+[data-testid="stAppViewContainer"] {
+    background-color: #f5f7ff;
+}
+
+/* Main content background */
+[data-testid="stHeader"] {
+    background-color: #f5f7ff;
+}
+
+/* Buttons */
 .stButton > button {
-    background-color: #ff4b4b;
-    color: white;
+    background-color: #8ec5fc;
+    color: black;
     border-radius: 12px;
     height: 50px;
     width: 100%;
@@ -33,21 +43,15 @@ st.markdown("""
     border: none;
 }
 
-/* Button hover effect */
+/* Button hover */
 .stButton > button:hover {
-    background-color: #ff1e1e;
-    color: yellow;
-    border: 2px solid white;
+    background-color: #bfe9ff;
+    color: black;
 }
 
-/* Page background */
-.stApp {
-    background-color: #0f172a;
-}
-
-/* Text color */
+/* Text colors */
 h1, h2, h3, p {
-    color: white;
+    color: #222222;
 }
 
 </style>
