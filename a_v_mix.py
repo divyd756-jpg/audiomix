@@ -9,7 +9,7 @@ import os
 
 VIDEO_PATH = "10sec.mp4"
 AUDIO_1 = "ADSS.mp3"
-AUDIO_2 = "bbb.mpeg"
+AUDIO_2 = "bbb.mp3"
 
 st.title("🎬 Media Mixing & Audio Studio")
 
