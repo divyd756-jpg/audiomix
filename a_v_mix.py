@@ -204,7 +204,7 @@ elif st.session_state.page == "mix":
         20,
         5
     )
-        offset2 = st.slider(
+    offset2 = st.slider(
         "pink.mp3 Start Time",
         0,
         10,
