@@ -1,4 +1,4 @@
-```python id="h4n2k8"
+```python
 import streamlit as st
 from moviepy.editor import (
     VideoFileClip,
@@ -41,7 +41,7 @@ def check_file(file):
 
 def clean_audio(audio):
 
-    # Simple background noise reduction
+    # Reduce background noise slightly
     return audio.volumex(0.8)
 
 # ---------------------------------------------------
@@ -53,7 +53,7 @@ def replace_audio(video_path, audio_path, output):
     video = VideoFileClip(video_path)
     audio = AudioFileClip(audio_path)
 
-    # Remove background noise
+    # Clean audio
     audio = clean_audio(audio)
 
     # Trim audio if longer than video
@@ -88,11 +88,11 @@ def mix_audio_tracks(output):
     # Load second song
     song2 = AudioFileClip(AUDIO_2)
 
-    # Simple noise reduction
+    # Clean audio
     song1 = clean_audio(song1)
     song2 = clean_audio(song2)
 
-    # Play second song after first song + 2 sec gap
+    # Start second song after first song + 2 sec gap
     song2 = song2.set_start(song1.duration + 2)
 
     # Combine songs
@@ -107,7 +107,7 @@ def mix_audio_tracks(output):
         fps=44100
     )
 
-    # Close clips
+    # Close files
     song1.close()
     song2.close()
     mixed.close()
