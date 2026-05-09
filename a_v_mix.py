@@ -25,7 +25,7 @@ VIDEO_PATH = "10sec.mp4"
 
 # DJ SONGS
 AUDIO_1 = "white.mp3"
-AUDIO_2 = "pink.mp3"
+AUDIO_2 = "ADSS.mp3"
 
 # ---------------------------------------------------
 # CHECK FILES
@@ -203,6 +203,12 @@ elif st.session_state.page == "mix":
         0,
         20,
         5
+    )
+        offset2 = st.slider(
+        "ADSS.mp3 Start Time",
+        0,
+        10,
+        2
     )
 
     # Mix button
