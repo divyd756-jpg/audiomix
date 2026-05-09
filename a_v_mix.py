@@ -4,8 +4,8 @@ from moviepy.editor import (
     AudioFileClip,
     CompositeAudioClip
 )
-import os
 from moviepy.audio.fx.all import audio_normalize
+import os
 
 # ---------------------------------------------------
 # PAGE SETTINGS
@@ -36,7 +36,7 @@ def check_file(file):
     return os.path.exists(file)
 
 # ---------------------------------------------------
-# SIMPLE NOISE REDUCTION
+# NOISE REDUCTION FUNCTION
 # ---------------------------------------------------
 
 def clean_audio(audio):
@@ -48,6 +48,27 @@ def clean_audio(audio):
     audio = audio.fx(audio_normalize)
 
     return audio
+
+# ---------------------------------------------------
+# FUNCTION: REMOVE NOISE
+# ---------------------------------------------------
+
+def remove_noise(input_file, output_file):
+
+    audio = AudioFileClip(input_file)
+
+    # Clean audio
+    cleaned = clean_audio(audio)
+
+    # Export cleaned audio
+    cleaned.write_audiofile(
+        output_file,
+        fps=44100
+    )
+
+    audio.close()
+    cleaned.close()
+
 # ---------------------------------------------------
 # FUNCTION: REPLACE VIDEO AUDIO
 # ---------------------------------------------------
@@ -57,7 +78,7 @@ def replace_audio(video_path, audio_path, output):
     video = VideoFileClip(video_path)
     audio = AudioFileClip(audio_path)
 
-    # Remove background noise
+    # Clean audio
     audio = clean_audio(audio)
 
     # Trim audio if longer than video
@@ -75,7 +96,6 @@ def replace_audio(video_path, audio_path, output):
         fps=24
     )
 
-    # Close files
     video.close()
     audio.close()
     final.close()
@@ -90,30 +110,29 @@ def mix_audio_tracks(output, volume1, volume2, offset2):
     song1 = AudioFileClip(AUDIO_1)
     song2 = AudioFileClip(AUDIO_2)
 
-    # Remove background noise
+    # Clean audio
     song1 = clean_audio(song1)
     song2 = clean_audio(song2)
 
-    # Adjust volume levels
+    # Adjust volume
     song1 = song1.volumex(volume1)
     song2 = song2.volumex(volume2)
 
-    # Apply timing offset
+    # Play second song after first song + offset
     song2 = song2.set_start(song1.duration + offset2)
 
-    # Create DJ mix
+    # Combine songs
     mixed = CompositeAudioClip([
         song1,
         song2
     ])
 
-    # Export mixed audio
+    # Export final mix
     mixed.write_audiofile(
         output,
         fps=44100
     )
 
-    # Close clips
     song1.close()
     song2.close()
     mixed.close()
@@ -133,7 +152,7 @@ if st.session_state.page == "home":
 
     st.subheader("🎬 Select Operation")
 
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns(3)
 
     with col1:
         if st.button("🎵 Replace Video Audio"):
@@ -142,6 +161,10 @@ if st.session_state.page == "home":
     with col2:
         if st.button("🎧 Mix Audio Tracks"):
             st.session_state.page = "mix"
+
+    with col3:
+        if st.button("🔇 Remove Noise"):
+            st.session_state.page = "noise"
 
 # ---------------------------------------------------
 # REPLACE AUDIO PAGE
@@ -164,7 +187,6 @@ elif st.session_state.page == "replace":
                 )
 
             st.success("✅ Audio Replaced Successfully!")
-
             st.video("output_video.mp4")
 
         else:
@@ -203,17 +225,18 @@ elif st.session_state.page == "mix":
     # Timing offset
     st.markdown("### ⏱ Apply Timing Offset")
 
-    offset2 = st.slider(
-        "pink.mp3 Start Time",
-        0,
-        20,
-        5
-    )
     offset1 = st.slider(
-        "white.mp3 Start Time",
+        "white.mp3 Delay",
         0,
-        20,
-        5
+        10,
+        2
+    )
+
+    offset2 = st.slider(
+        "pink.mp3 Delay",
+        0,
+        10,
+        2
     )
 
     # Mix button
@@ -231,11 +254,38 @@ elif st.session_state.page == "mix":
                 )
 
             st.success("✅ DJ Mix Created Successfully!")
-
             st.audio("dj_mix.mp3")
 
         else:
             st.error("❌ Audio files missing.")
+
+    if st.button("⬅ Back"):
+        st.session_state.page = "home"
+
+# ---------------------------------------------------
+# NOISE REMOVAL PAGE
+# ---------------------------------------------------
+
+elif st.session_state.page == "noise":
+
+    st.subheader("🔇 Remove Background Noise")
+
+    if st.button("▶ Clean white.mp3"):
+
+        if check_file(AUDIO_1):
+
+            with st.spinner("Cleaning Audio..."):
+
+                remove_noise(
+                    AUDIO_1,
+                    "clean_white.mp3"
+                )
+
+            st.success("✅ Noise Removed Successfully!")
+            st.audio("clean_white.mp3")
+
+        else:
+            st.error("❌ Audio file missing.")
 
     if st.button("⬅ Back"):
         st.session_state.page = "home"
