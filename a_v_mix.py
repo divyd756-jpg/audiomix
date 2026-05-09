@@ -16,11 +16,42 @@ st.set_page_config(
     layout="centered"
 )
 
-st.title("🎧 DJ Audio & Video Mixing Studio")
+st.title("Audio & Video Mixing Studio")
 
-# ---------------------------------------------------
-# FILE PATHS
-# ---------------------------------------------------
+st.markdown("""
+<style>
+
+/* Main buttons */
+.stButton > button {
+    background-color: #ff4b4b;
+    color: white;
+    border-radius: 12px;
+    height: 50px;
+    width: 100%;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+}
+
+/* Button hover effect */
+.stButton > button:hover {
+    background-color: #ff1e1e;
+    color: yellow;
+    border: 2px solid white;
+}
+
+/* Page background */
+.stApp {
+    background-color: #0f172a;
+}
+
+/* Text color */
+h1, h2, h3, p {
+    color: white;
+}
+
+</style>
+""", unsafe_allow_html=True)
 
 VIDEO_PATH = "10sec.mp4"
 
